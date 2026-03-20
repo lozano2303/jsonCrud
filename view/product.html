@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista productos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 10px;
+        }
+        .table {
+            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            border-top: 1px solid #dee2e6;
+            color: #495057;
+            font-weight: 600;
+        }
+        .table thead th:first-child {
+            border-left: 1px solid #dee2e6;
+            border-top-left-radius: 6px;
+        }
+        .table thead th:last-child {
+            border-right: 1px solid #dee2e6;
+            border-top-right-radius: 6px;
+        }
+        .table tbody td {
+            vertical-align: middle;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .table tbody td:first-child {
+            border-left: 1px solid #dee2e6;
+        }
+        .table tbody td:last-child {
+            border-right: 1px solid #dee2e6;
+        }
+        .table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 6px;
+        }
+        .table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 6px;
+        }
+        .card {
+            border: 1px solid #eef2f5;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            background-color: #fcfcfc;
+            border-radius: 8px;
+        }
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .form-control {
+            border-radius: 6px;
+            border-color: #ced4da;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+        }
+        .pagination-numbers {
+            display: flex;
+            gap: 6px;
+        }
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: 1px solid #dee2e6;
+            background-color: #fff;
+            color: #0d6efd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .pagination-btn:hover {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+            color: #0a58ca;
+        }
+        .pagination-btn.number.active {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+        .pagination-btn.arrow {
+            color: #495057;
+        }
+        .pagination-btn.arrow:hover {
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Lista productos</h1>
+        
+        <!-- Buscador -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input id="searchInput" type="text" class="form-control" placeholder="Buscar por título..." onkeyup="searchProducts()">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success" onclick="showAddForm()">Nuevo Producto</button>
+            </div>
+        </div>
+
+        <!-- Formulario para agregar producto (oculto por defecto) -->
+        <div id="addForm" class="card mb-3" style="display: none;">
+            <div class="card-body">
+                <h5 class="card-title">Agregar Nuevo Producto</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <label>Title:</label>
+                        <input id="newTitle" type="text" class="form-control" placeholder="Título">
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label>Price:</label>
+                        <input id="newPrice" type="number" step="0.01" class="form-control" placeholder="Precio">
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="addProduct()">Guardar</button>
+                <button class="btn btn-danger" onclick="hideAddForm()">Cancelar</button>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="container">
+
+            </tbody>
+        </table>
+        
+        <!-- Botón para eliminar seleccionados -->
+        <div class="mb-3">
+            <button class="btn btn-danger" onclick="deleteSelected()" id="deleteSelectedBtn" style="display: none;">
+                Eliminar seleccionados (<span id="selectedCount">0</span>)
+            </button>
+        </div>
+        
+        <!-- Paginación -->
+        <div class="pagination-container">
+            <button class="pagination-btn arrow" onclick="changePage(-1)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="pagination-numbers" id="paginationNumbers">
+            </div>
+            <button class="pagination-btn arrow" onclick="changePage(1)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <script src="/js/products.js"></script>
+</body>
+</html>
